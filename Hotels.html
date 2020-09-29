@@ -1,0 +1,214 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel</title>
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_2080264_dsernvia1jn.css">
+    <link rel="stylesheet" href="../src/bootstrap.css">
+    <link rel="stylesheet" href="./asset/css/common.css">
+    <link rel="stylesheet" href="./asset/css/planTrip1.css">
+    <script src="https://maps.googleapis.com/maps/api/js?&libraries=places"></script>
+    <script>
+        var map;
+        function initialize() {
+            var mapOptions = {
+                zoom: 14,
+                center: new google.maps.LatLng(-37.812723,144.972625),
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+            // Define your locations: HTML content for the info window, latitude, longitude
+            var locations = [
+                ['', -37.815018, 144.946014],
+                ['',-37.809947, 144.969432],
+                ['',-37.811327,144.967701],
+                ['',-37.812971,144.969501],
+                ['',-37.812723,144.972625],
+                ['',-37.813101,144.965004],
+                ['',-37.815855,144.967517],
+                ['',-37.817585,144.965949],
+                ['',-37.817443,144.964382],
+                ['',-37.817775,144.960837]
+            ];
+
+            // Setup the different icons and shadows
+            var iconURLPrefix = 'http://maps.google.com/mapfiles/ms/icons/';
+
+            var icons = [
+                iconURLPrefix + 'blue-dot.png',
+                iconURLPrefix + 'purple-dot.png'
+            ]
+            var iconsLength = icons.length;
+
+
+            var infowindow = new google.maps.InfoWindow({
+                maxWidth: 160
+            });
+
+            var markers = new Array();
+
+            var iconCounter = 0;
+
+            // Add the markers and infowindows to the map
+            for (var i = 0; i < locations.length; i++) {
+                var marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                    map: map,
+                    icon: icons[iconCounter]
+                });
+
+                markers.push(marker);
+
+                google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                    return function () {
+                        // infowindow.setContent(locations[i][0]);
+                        // infowindow.open(map, marker);
+                        window.location.href = './HotelViewMap.html'
+                    }
+                })(marker, i));
+
+                iconCounter++;
+                // We only have a limited number of possible icon colors, so we may have to restart the counter
+                if (iconCounter >= iconsLength) {
+                    iconCounter = 0;
+                }
+            }
+
+
+
+            var acOptions = {
+                types: ['establishment'],
+                types: ['geocode']
+            };
+
+            var autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), acOptions);
+            autocomplete.bindTo('bounds', map);
+            var infoWindow = new google.maps.InfoWindow();
+            var marker = new google.maps.Marker({
+                map: map
+            });
+
+            google.maps.event.addListener(autocomplete, 'place_changed', function () {
+                infoWindow.close();
+                var place = autocomplete.getPlace();
+                if (place.geometry.viewport) {
+                    map.fitBounds(place.geometry.viewport);
+                    map.setZoom(13);
+                }
+                else {
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(12);
+                }
+                //			marker.setPosition(place.geometry.location);
+                //			infoWindow.setContent('<div><strong>' + place.name + '</strong><br>');
+                //			infoWindow.open(map, marker);
+                //			google.maps.event.addListener(marker,'click',function(e){
+                //
+                //			infoWindow.open(map, marker);
+                //
+                //			});
+            });
+
+        }
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+</head>
+
+<body>
+    <div class="map-modal-container">
+        <div class="map-modal">
+            <p>Wait time 25 mins</p>
+            <p>Next position 5</p>
+            <div>
+                <button onclick="showConfirmModal()">Start the queue</button>
+                <button onclick="closeQueueModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="page">
+        <div class="drag">
+            <header class="top-header">
+                <div class="left">
+                    <img src="./asset/images/v2_qfntyc.png" class="v2_qfntyc-img" alt="">
+                    <h5><a href="./home.html">Queue online & plan your trip</a></h5>
+
+                </div>
+                <div class="right">
+                    <div class="user-avatars">
+                        <img src="./asset/images/v2_qfo7cr.jpg" alt="">
+                    </div>
+                    <span>Welcome,Skye</span>
+                </div>
+            </header>
+            <div class="change-btn"><img src="./asset/images/v2_qfpenz.png" class="v2_qfpenz-img" alt=""></div>
+            <div class="nav-list-container">
+                <div class="nav-btn nav-absolute-right"><i class="iconfont icon-nav"></i></div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="./viewMap.html">
+                            <i class="iconfont icon-location"></i>
+                            <span>View Map</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="./planTrip.html">
+                            <i class="iconfont icon-calendar"></i>
+                            <span>Plan a trip</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="./chatRoom.html">
+                            <i class="iconfont icon-LC_icon_chat_fill"></i>
+                            <span>Chatroom</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="./gameSpace.html">
+                            <i class="iconfont icon-GamePadyouxishoubing"></i>
+                            <span>Gamespace</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <main class="main-container main-trips-detail">
+                <div class="trips-detail-container">
+                    <!-- <h1>Looking to start a trip?</h1> -->
+                    <div class="search-container">
+                        <div class="search-box">
+                            <i class="iconfont icon-search"></i>
+                            <input type="text" placeholder="Please enter any place you want to go">
+                        </div>
+                    </div>
+                </div>
+                <div class="map-container" style="left: 180px;">
+                    <div id="map-canvas"></div>
+                </div>
+            </main>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+
+
+    <script src="./asset/js/common.js"></script>
+    <script>
+        $('input').bind('keydown', function (event) {
+            if (event.keyCode == "13") {
+                window.location.href = './trip.html'
+            }
+        });
+    </script>
+</body>
+
+</html>

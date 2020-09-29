@@ -1,0 +1,287 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>planMapView</title>
+    <link rel="stylesheet" href="http://at.alicdn.com/t/font_2080264_0cpenenvdgjo.css">
+    <link rel="stylesheet" href="../src/bootstrap.css">
+    <link rel="stylesheet" href="./asset/css/common.css">
+    <link rel="stylesheet" href="./asset/css/viewMap.css">
+    <script src="https://maps.googleapis.com/maps/api/js?&libraries=places"></script>
+    <script>
+        var planMapViewData = [
+            {
+                title: 'Queen Victoria Market',
+                name: 'Queen Victoria Market',
+                Latitude: -37.482508,
+                Longitude: 144.572409,
+                info: 'It is popular with locals as their go-to spot for fresh fruit, veggies, meat and an outstanding variety of dairy and small goods, but Melbourne’s Queen Victoria Market is also something of a must visit for tourists. ',
+                img: './asset/images/1.jpg'
+            },
+            {
+                title: 'Australian Centre for Contemporary Art',
+                name: 'Australian Centre for Contemporary Art，Australia',
+                Latitude: -37.493539,
+                Longitude: 144.58125,
+                info: 'The Australian Centre for Contemporary Art (ACCA) is an Australian flagship contemporary art space, and a leading centre for the artistic and wider communities to participate in a critically engaged contemporary art culture that encourages curiosity and transformation.',
+                img: './asset/images/2.jpg'
+            },
+            {
+                title: 'National Gallery of Victoria',
+                name: 'National Gallery of Victoria',
+                Latitude: -37.822857,
+                Longitude: 144.968412,
+                info: 'Public gallery with vastvaried collection of noted Australian andinternational art and artefacts.',
+                img: './asset/images/3.jpg'
+            },
+            {
+                title: 'Eureka Skydeck',
+                name: 'Eureka Skydeck',
+                Latitude: -37.821334,
+                Longitude: 144.964698,
+                info: 'Perfectly positioned on the banks of the Yarra River, Eureka Skydeck provides incredible 360-degree views from the floor to ceiling windows that overlook Melbourne is CBD, sports precinct, Port Phillip Bay, Docklands and everything in between',
+                img: './asset/images/4.jpg'
+            },
+            {
+                title: 'Melbourne Star',
+                name: 'Melbourne Star',
+                Latitude: -37.811412,
+                Longitude: 144.96102,
+                info: 'Take a spin around the Melbourne Star for breathtaking views of Melbourne and surrounds. From a height of almost 400 feet (120 meters), gaze down on urban landmarks as you circle the observation wheel in a comfortable passenger pod.',
+                img: './asset/images/5.jpg'
+            },
+            {
+                title: 'A LIFE Melbourne Aquarium',
+                name: 'A LIFE Melbourne Aquarium',
+                Latitude: -37.811412,
+                Longitude: 144.96102,
+                info: 'Dive into the watery world of Australia’s native marine creatures at the SEA LIFE Melbourne Aquarium. Get an up-close view of penguins, sharks, stingrays, seahorses and more as you explore 12 distinct ecosystems at the beautifully designed aquarium. Skip to the front of the line with your ticket, so you’ll have more time to watch playful penguins and marvel at jellyfish',
+                img: './asset/images/6.jpg'
+            },
+        ]
+
+        function getQueryVariable(variable) {
+            var query = window.location.search.substring(1);
+            var vars = query.split("&");
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split("=");
+                if (pair[0] == variable) { return pair[1]; }
+            }
+            return (false);
+        }
+        var planMapVieWId = getQueryVariable('id')
+        var planMapViewInfo = planMapViewData[planMapVieWId]
+
+        var map;
+        function initialize() {
+            var mapOptions = {
+                zoom: 14,
+                center: new google.maps.LatLng(planMapViewInfo.Latitude,planMapViewInfo.Longitude),
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            };
+            map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
+
+            // Define your locations: HTML content for the info window, latitude, longitude
+            var locations = [
+                [document.getElementById('service1'),planMapViewInfo.Latitude,planMapViewInfo.Longitude]
+            ];
+
+            // Setup the different icons and shadows
+            var iconURLPrefix = 'http://maps.google.com/mapfiles/ms/icons/';
+
+            var icons = [
+                iconURLPrefix + 'blue-dot.png',
+                iconURLPrefix + 'purple-dot.png'
+            ]
+            var iconsLength = icons.length;
+
+
+            var infowindow = new google.maps.InfoWindow({
+                maxWidth: 700
+            });
+
+            var markers = new Array();
+
+            var iconCounter = 0;
+
+            // Add the markers and infowindows to the map
+            for (var i = 0; i < locations.length; i++) {
+                var marker = new google.maps.Marker({
+                    position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+                    map: map,
+                    icon: icons[iconCounter]
+                });
+
+                markers.push(marker);
+
+                google.maps.event.addListener(marker, 'click', (function (marker, i) {
+                    return function () {
+                        infowindow.setContent(locations[i][0]);
+                        infowindow.open(map, marker);
+                    }
+                })(marker, i));
+
+                iconCounter++;
+                // We only have a limited number of possible icon colors, so we may have to restart the counter
+                if (iconCounter >= iconsLength) {
+                    iconCounter = 0;
+                }
+            }
+            var acOptions = {
+                types: ['establishment'],
+                types: ['geocode']
+            };
+
+            var autocomplete = new google.maps.places.Autocomplete(document.getElementById('autocomplete'), acOptions);
+            autocomplete.bindTo('bounds', map);
+            var infoWindow = new google.maps.InfoWindow();
+            var marker = new google.maps.Marker({
+                map: map
+            });
+
+            google.maps.event.addListener(autocomplete, 'place_changed', function () {
+                infoWindow.close();
+                var place = autocomplete.getPlace();
+                if (place.geometry.viewport) {
+                    map.fitBounds(place.geometry.viewport);
+                    map.setZoom(13);
+                }
+                else {
+                    map.setCenter(place.geometry.location);
+                    map.setZoom(12);
+                }
+                //			marker.setPosition(place.geometry.location);
+                //			infoWindow.setContent('<div><strong>' + place.name + '</strong><br>');
+                //			infoWindow.open(map, marker);
+                //			google.maps.event.addListener(marker,'click',function(e){
+                //
+                //			infoWindow.open(map, marker);
+                //
+                //			});
+            });
+
+        }
+
+        google.maps.event.addDomListener(window, 'load', initialize);
+
+    </script>
+</head>
+
+<body>
+    <div class="queue-modal-container map-modal-container">
+        <div class="queue-modal map-modal">
+            <p>Wait time 25 mins</p>
+            <p>Next position 5</p>
+            <div>
+                <button onclick="showConfirmModal()">Start the queue</button>
+                <button onclick="closeQueueModal()">Cancel</button>
+            </div>
+        </div>
+    </div>
+    <div class="confirm-modal-container map-modal-container">
+        <div class="confirm-modal map-modal">
+            <p>Your are already around here?</p>
+            <div>
+                <button onclick="goGameSpace()">Yes,it is a little boring</button>
+            </div>
+            <div>
+                <button onclick="colseConfirmModal()">No, i need more time</button>
+            </div>
+        </div>
+    </div>
+    <div class="other-modal-container map-modal-container" onclick="closeOtherModal()">
+        <div class="confirm-modal map-modal">
+            <p>Depending on your current location, we will start a new queue when you are nearing your destination.</p>
+        </div>
+    </div>
+    <div class="hide">
+        <div class="service" style="text-align: left;width: 300px;
+        box-sizing: border-box;" id="service1">
+            <p id="name">Queen Victoria Market，Australia</p>
+            <img id="img" src="./asset//images/v2_qfo7cr.jpg" style="width: 280px;height: 160px;" alt="">
+            <p id="info" style="margin: 0;padding: 0;">Public gallery with vast, </p>
+            <button style="margin-right:20px;margin-top:10px;background: none;border: none;color: rgb(255, 0, 0);"
+                onclick="showQueueModal()">Want to take look? Try the online queue</button>
+            <a href="./planTrip.html"><button
+                    style="background: none;border: none;color: rgb(255, 0, 0);">Cancel</button></a>
+        </div>
+    </div>
+    <div class="page">
+        <div class="drag">
+            <header class="top-header">
+                <div class="left">
+                    <img src="./asset/images/v2_qfntyc.png" class="v2_qfntyc-img" alt="">
+                    <h5><a href="./home.html">Queue online & plan your trip</a></h5>
+
+                </div>
+                <div class="right">
+                    <div class="user-avatars">
+                        <img src="./asset/images/v2_qfo7cr.jpg" alt="">
+                    </div>
+                    <span>Welcome,Skye</span>
+                </div>
+            </header>
+            <div class="change-btn"><img src="./asset/images/v2_qfpenz.png" class="v2_qfpenz-img" alt=""></div>
+            <div class="nav-list-container">
+                <div class="nav-btn nav-absolute-right"><i class="iconfont icon-nav"></i></div>
+                <ul class="nav-list">
+                    <li class="nav-item">
+                        <a href="./viewMap.html">
+                            <i class="iconfont icon-location"></i>
+                            <span>View Map</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="./planTrip.html">
+                            <i class="iconfont icon-calendar"></i>
+                            <span>Plan a trip</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="./chatRoom.html">
+                            <i class="iconfont icon-LC_icon_chat_fill"></i>
+                            <span>Chatroom</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="./gameSpace.html">
+                            <i class="iconfont icon-GamePadyouxishoubing"></i>
+                            <span>Gamespace</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <main class="main-container">
+                <div class="map-tips">
+                    <h5 id="mainTitle">National gallery of victoria</h5>
+                </div>
+                <div class="map-container">
+                    <div id="map-canvas"></div>
+                </div>
+            </main>
+        </div>
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+
+
+    <script src="./asset/js/common.js"></script>
+    <script src="./asset/js/planMapView.js"></script>
+    <script>
+        $(function(){
+            $('#mainTitle').html(planMapViewInfo.title)
+            $('.service #name').html(planMapViewInfo.name)
+            $('.service #img').attr('src',planMapViewInfo.img)
+            $('.service #info').html(planMapViewInfo.info)
+        })
+    </script>
+</body>
+
+</html>
