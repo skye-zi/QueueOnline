@@ -1,0 +1,78 @@
+.body{
+    height: 100%;
+    width: 100%;
+}
+.trips-container{
+    margin-top: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    /* margin-right:%; */
+}
+
+/* h1
+{
+    margin-right:10% ;
+} */
+.trips-box{
+    background-color: rgba(255, 255, 255, 0.4);
+    width: 280px;
+    margin-right: 80px;
+}
+.trips-box:last-of-type{
+    margin-right: 0;
+}
+.trips-box .trips-title{
+    padding: 25px 20px;
+    text-align: center;
+}
+.trips-box .trips-title p{
+  margin: 0;
+  padding: 0;
+}
+ul{
+    margin: 0;
+    padding: 0;
+}
+.trips-box li {
+    /* color: #fff; */
+    background-color: rgba(16, 16, 16, 0.22);
+    color: rgba(16, 16, 16, 0.76);
+    font-size: 14px;
+    padding: 10px 30px 10px;
+    text-align: left;
+    margin-bottom: 5px;
+    box-shadow: -3px 0px 0px 0px #656565;
+}
+.trips-box li:last-of-type{
+    margin-bottom: 0;
+}
+.trips-box span{
+    /* color: #fff; */
+}
+.trips-box .iconfont {
+    margin-right: 20px;
+    font-size: 22px;
+    /* color: #fff; */
+}
+.search-container{
+    padding-bottom: 10px;
+}
+.main-trips-detail{
+    padding-top: 60px ;
+}
+.main-container {
+    position: relative;
+    min-height: 100%;
+    box-sizing: border-box;
+    padding-left: 180px;
+}
+.trips-detail-container{
+    margin-top: 10px;
+    position: relative;
+}
+.service{
+    text-align: left;
+}
+
+

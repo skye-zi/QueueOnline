@@ -1,0 +1,59 @@
+.body {
+    height: 100%;
+    width: 100%;
+}
+.main-container {
+    position: relative;
+    padding-left: 180px;
+    /* min-height: 100%; */
+    box-sizing: border-box;
+    margin: auto;
+    /* margin-left: 22%; */
+  
+}
+
+.main-container .map-tips {
+    text-align: left;
+    width: 840px;
+    margin: -20 auto;
+}
+.main-container h6 {
+    text-align: left;
+   
+}
+.map-modal-container{
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: auto;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    z-index: 999;
+    display: table;
+    width: 100%;
+    display: none;
+}
+.map-modal{
+    width: 300px;
+    margin: 0 auto;
+    background: #ffffff;
+    border-radius: 5px;
+    padding: 30px 50px;
+    position: relative;
+    z-index: 1000;
+    color: rgba(0, 0, 0, 0.54);
+}
+.map-modal p{
+    margin: 0;
+}
+.map-modal button{
+    margin: 20px 10px 0 0;
+    border: none;
+    background: none;
+    color: #337ab7;
+}
+.queue-modal-container,.confirm-modal-container,.other-modal-container{
+    display: none;
+}
+
