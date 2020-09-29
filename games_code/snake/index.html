@@ -1,0 +1,278 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <link rel="stylesheet" href="http://at.alicdn.com/t/font_2080264_rik8k7imit.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="../../asset/css/common.css">
+    
+  <style>
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+  canvas {
+    width: 500px;
+      margin: auto;
+      height: 600px;
+      padding: 50px;
+      background: #eee;
+      background-color: rgba(255, 255, 255, 0.7);
+      box-shadow: 3px 1px 3px #e4e4e4;
+  }
+
+.main-container{
+  padding-top: 40px;
+}
+  .morePlayerBtn {
+			padding: 10px;
+			border-radius: 5px;
+			box-shadow: 1px 1px #817c7c;
+			margin: 10px;
+		}
+
+		.map-modal-container {
+			position: absolute;
+			left: 0;
+			right: 0;
+			height: 100%;
+			top: 0;
+			bottom: 0;
+			z-index: 999;
+			width: 100%;
+		}
+
+		.map-modal {
+			padding: 30px 20px;
+			text-align: center;
+			position: absolute;
+			left: 0;
+			right: 0;
+			height: auto;
+			top: 0;
+			bottom: 0;
+			margin: auto;
+			z-index: 1000;
+			display: table;
+		}
+
+		.map-modal button {
+			margin: 5px;
+		}
+  </style>
+</head>
+<body>
+  <div class="queue-modal-container map-modal-container">
+		<div class="queue-modal map-modal">
+			<p style="font-weight: bold;">Want to have a game partner?</p>
+			<div style="margin-top: 30px;">
+				<button onclick="goChatRoom()">Find one in the Chatroom. </button>
+				<button onclick="closeQueueModal()">No,i will play another game.</button>
+			</div>
+		</div>
+	</div>
+  <div class="page">
+    <div class="drag">
+        <header class="top-header">
+            <div class="left">
+                <img src="../../asset/images/v2_qfntyc.png" class="v2_qfntyc-img" alt="">
+                <h5>Queue online & plan your trip</h5>
+            </div>
+            <div class="right">
+                <div class="user-avatars">
+                    <img src="../../asset/images/v2_qfo7cr.jpg" alt="">
+                </div>
+                <span>Welcome,Skye</span>
+            </div>
+        </header>
+        <div class="change-btn"><img src="../../asset/images/v2_qfpenz.png" class="v2_qfpenz-img" alt=""></div>
+        <div class="nav-list-container">
+            <div class="nav-btn nav-absolute-right"><i class="iconfont icon-nav"></i></div>
+            <ul class="nav-list">
+                <li class="nav-item">
+                    <a href="../../viewMap.html">
+                        <i class="iconfont icon-location"></i>
+                        <span>View Map</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../../planTrip.html">
+                        <i class="iconfont icon-calendar"></i>
+                        <span>Plan a trip</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="../../chatRoom.html">
+                        <i class="iconfont icon-LC_icon_chat_fill"></i>
+                        <span>Chatroom</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="../../gameSpace.html">
+                        <i class="iconfont icon-GamePadyouxishoubing"></i>
+                        <span>Gamespace</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <main class="main-container">
+          <div style="width: 751px;margin:0px auto 20px;text-align:left">
+            <button class="morePlayerBtn">Want a partner?</button>
+          </div>
+          <canvas width="400" height="400" id="game"></canvas>
+
+        </main>
+    </div>
+
+</div>
+<script>
+var canvas = document.getElementById('game');
+var context = canvas.getContext('2d');
+
+var grid = 16;
+var count = 0;
+
+var snake = {
+  x: 160,
+  y: 160,
+
+  // snake velocity. moves one grid length every frame in either the x or y direction
+  dx: grid,
+  dy: 0,
+
+  // keep track of all grids the snake body occupies
+  cells: [],
+
+  // length of the snake. grows when eating an apple
+  maxCells: 4
+};
+var apple = {
+  x: 320,
+  y: 320
+};
+
+// get random whole numbers in a specific range
+// @see https://stackoverflow.com/a/1527820/2124254
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
+
+// game loop
+function loop() {
+  requestAnimationFrame(loop);
+
+  // slow game loop to 15 fps instead of 60 (60/15 = 4)
+  if (++count < 4) {
+    return;
+  }
+
+  count = 0;
+  context.clearRect(0,0,canvas.width,canvas.height);
+
+  // move snake by it's velocity
+  snake.x += snake.dx;
+  snake.y += snake.dy;
+
+  // wrap snake position horizontally on edge of screen
+  if (snake.x < 0) {
+    snake.x = canvas.width - grid;
+  }
+  else if (snake.x >= canvas.width) {
+    snake.x = 0;
+  }
+
+  // wrap snake position vertically on edge of screen
+  if (snake.y < 0) {
+    snake.y = canvas.height - grid;
+  }
+  else if (snake.y >= canvas.height) {
+    snake.y = 0;
+  }
+
+  // keep track of where snake has been. front of the array is always the head
+  snake.cells.unshift({x: snake.x, y: snake.y});
+
+  // remove cells as we move away from them
+  if (snake.cells.length > snake.maxCells) {
+    snake.cells.pop();
+  }
+
+  // draw apple
+  context.fillStyle = 'red';
+  context.fillRect(apple.x, apple.y, grid-1, grid-1);
+
+  // draw snake one cell at a time
+  context.fillStyle = 'green';
+  snake.cells.forEach(function(cell, index) {
+ 
+    // drawing 1 px smaller than the grid creates a grid effect in the snake body so you can see how long it is
+    context.fillRect(cell.x, cell.y, grid-1, grid-1);
+
+    // snake ate apple
+    if (cell.x === apple.x && cell.y === apple.y) {
+      snake.maxCells++;
+
+      // canvas is 400x400 which is 25x25 grids
+      apple.x = getRandomInt(0, 25) * grid;
+      apple.y = getRandomInt(0, 25) * grid;
+    }
+
+    // check collision with all cells after this one (modified bubble sort)
+    for (var i = index + 1; i < snake.cells.length; i++) {
+   
+      // snake occupies same space as a body part. reset game
+      if (cell.x === snake.cells[i].x && cell.y === snake.cells[i].y) {
+        snake.x = 160;
+        snake.y = 160;
+        snake.cells = [];
+        snake.maxCells = 4;
+        snake.dx = grid;
+        snake.dy = 0;
+
+        apple.x = getRandomInt(0, 25) * grid;
+        apple.y = getRandomInt(0, 25) * grid;
+      }
+    }
+  });
+}
+
+// listen to keyboard events to move the snake
+document.addEventListener('keydown', function(e) {
+  // prevent snake from backtracking on itself by checking that it's
+  // not already moving on the same axis (pressing left while moving
+  // left won't do anything, and pressing right while moving left
+  // shouldn't let you collide with your own body)
+
+  // left arrow key
+  if (e.which === 37 && snake.dx === 0) {
+    snake.dx = -grid;
+    snake.dy = 0;
+  }
+  // up arrow key
+  else if (e.which === 38 && snake.dy === 0) {
+    snake.dy = -grid;
+    snake.dx = 0;
+  }
+  // right arrow key
+  else if (e.which === 39 && snake.dx === 0) {
+    snake.dx = grid;
+    snake.dy = 0;
+  }
+  // down arrow key
+  else if (e.which === 40 && snake.dy === 0) {
+    snake.dy = grid;
+    snake.dx = 0;
+  }
+});
+
+// start the game
+requestAnimationFrame(loop);
+</script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script type="text/javascript" src="../../asset/js/common.js"></script>
+
+</body>
+</html>

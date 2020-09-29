@@ -1,0 +1,364 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<title>GoBang</title>
+	<link rel="stylesheet" href="http://at.alicdn.com/t/font_2080264_rik8k7imit.css">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/css/bootstrap.min.css"
+		integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+	<link rel="stylesheet" href="../../asset/css/common.css">
+
+	<style type="text/css">
+		* {
+			padding: 0;
+			border: 0;
+			margin: 0;
+		}
+
+		html,
+		body {
+			width: 100%;
+			height: 100%;
+			background: rgba(0, 0, 0, 0.5);
+		}
+
+		.page {
+			background-image: url("../../asset/images/v2_q6vz7g.jpg");
+		}
+
+
+		.nav-item span {
+			font-weight: normal;
+		}
+
+		.main-container {
+			padding-left: 180px;
+			padding-top: 30px;
+		}
+
+		.main-container .container {
+			width: 560px;
+		}
+
+		#box {
+			display: inline-block;
+			width: 751px;
+			height: 751px;
+			border-left: 1px solid #ccc;
+			border-top: 1px solid #ccc;
+			box-sizing: border-box;
+			margin: 0 auto;
+			font-size: 0px;
+			background-color: #817c7c;
+			box-shadow: 3px 1px 3px #e4e4e4;
+		}
+
+		#box>li {
+			width: 50px;
+			height: 50px;
+			box-sizing: border-box;
+			border-right: 1px solid #ccc;
+			border-bottom: 1px solid #ccc;
+			list-style: none;
+			display: inline-block;
+			position: relative;
+
+		}
+
+		#box>li>span {
+			display: inline-block;
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			margin: auto;
+			width: 30px;
+			height: 30px;
+			border-radius: 50%;
+		}
+
+		#box>li>span.white {
+			background: white;
+		}
+
+		#box>li>span.black {
+			background: black;
+		}
+
+		.morePlayerBtn {
+			padding: 10px;
+			border-radius: 5px;
+			box-shadow: 1px 1px #817c7c;
+			margin: 10px;
+		}
+
+		.map-modal-container {
+			position: absolute;
+			left: 0;
+			right: 0;
+			height: 100%;
+			top: 0;
+			bottom: 0;
+			z-index: 999;
+			width: 100%;
+		}
+
+		.map-modal {
+			padding: 30px 20px;
+			text-align: center;
+			position: absolute;
+			left: 0;
+			right: 0;
+			height: auto;
+			top: 0;
+			bottom: 0;
+			margin: auto;
+			z-index: 1000;
+			display: table;
+		}
+
+		.map-modal button {
+			margin: 5px;
+		}
+	</style>
+</head>
+
+<body>
+	<div class="queue-modal-container map-modal-container">
+		<div class="queue-modal map-modal">
+			<p style="font-weight: bold;">Want to have a game partner?</p>
+			<div style="margin-top: 30px;">
+				<button onclick="goChatRoom()">Find one in the Chatroom. </button>
+				<button onclick="closeQueueModal()">No,i will play another game.</button>
+			</div>
+		</div>
+	</div>
+	<div class="page">
+		<div class="drag">
+			<header class="top-header">
+				<div class="left">
+					<img src="../../asset/images/v2_qfntyc.png" class="v2_qfntyc-img" alt="">
+					<h5>Queue online & plan your trip</h5>
+				</div>
+				<div class="right">
+					<div class="user-avatars">
+						<img src="../../asset/images/v2_qfo7cr.jpg" alt="">
+					</div>
+					<span>Welcome,Skye</span>
+				</div>
+			</header>
+			<div class="change-btn"><img src="../../asset/images/v2_qfpenz.png" class="v2_qfpenz-img" alt=""></div>
+			<div class="nav-list-container">
+				<div class="nav-btn nav-absolute-right"><i class="iconfont icon-nav"></i></div>
+				<ul class="nav-list">
+					<li class="nav-item">
+						<a href="../../viewMap.html">
+							<i class="iconfont icon-location"></i>
+							<span>View Map</span>
+						</a>
+					</li>
+					<li class="nav-item">
+						<a href="../../planTrip.html">
+							<i class="iconfont icon-calendar"></i>
+							<span>Plan a trip</span>
+						</a>
+					</li>
+					<li class="nav-item">
+						<a href="../../chatRoom.html">
+							<i class="iconfont icon-LC_icon_chat_fill"></i>
+							<span>Chatroom</span>
+						</a>
+					</li>
+					<li class="nav-item active">
+						<a href="../../gameSpace.html">
+							<i class="iconfont icon-GamePadyouxishoubing"></i>
+							<span>Gamespace</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<main class="main-container">
+				<div style="width: 751px;margin:0px auto 20px;text-align:left">
+					<button class="morePlayerBtn">Want a partner?</button>
+				</div>
+				<ul id="box">
+				</ul>
+			</main>
+		</div>
+
+	</div>
+
+	<script type="text/javascript">
+		var chessColor = false; // false 黑棋    true 白棋
+		var blackList = []
+
+		var whiteList = []
+
+		createChecker();
+		setListener();
+
+		function setListener() {
+			var ulBox = document.getElementById('box');
+			ulBox.onclick = function (ev) {
+				var e = ev || event;
+				if (e.target.children.length >= 1) {
+					return false
+				};
+				var pointX = e.target.x;
+				var pointY = e.target.y;
+				e.target.appendChild(getOneChess(chessColor))
+				if (chessColor) {
+					whiteList.push({
+						x: pointX,
+						y: pointY
+					});
+					setTimeout(() => {
+						if (isWin(pointX, pointY, whiteList)) {
+							alert('white');
+							clearChess();
+						}
+					}, 20);
+				} else {
+					blackList.push({
+						x: pointX,
+						y: pointY
+					})
+					if (isWin(pointX, pointY, blackList)) {
+						alert('black');
+						clearChess();
+					}
+				}
+				chessColor = !chessColor;
+				console.log(whiteList, blackList);
+			}
+		}
+
+		// 清除
+		function clearChess() {
+			whiteList = [];
+			blackList = [];
+			var mChessList = document.getElementsByTagName('li');
+			var mChessLength = mChessList.length;
+			for (var i = 0; i < mChessLength; i++) {
+				mChessList[i].innerHTML = '';
+			}
+		}
+
+		// 获取一个元素
+		function getOneChess(isWhite) {
+			var mChess = document.createElement('span');
+			mChess.className = isWhite ? 'white' : 'black';
+			return mChess;
+		}
+
+		function createChecker() {
+			var ulBox = document.getElementById('box');
+			for (var x = 0; x < 15; x++) {
+				for (var y = 0; y < 15; y++) {
+					var mLi = document.createElement('li');
+					mLi.x = x;
+					mLi.y = y;
+					mLi.haveChess = false;
+					ulBox.appendChild(mLi);
+				}
+			}
+		}
+		// 判断列表中
+		function isHaveChess(x, y, list) {
+			for (var i = 0; i < list.length; i++) {
+				if ((list[i]['x'] === x) && (list[i]['y'] === y)) {
+					return true;
+				}
+			}
+		}
+
+		function isWin(x, y, list) {
+			if (getAxisLineCount(x, y, list, 'x') >= 5) {
+				return true;
+			} else if (getAxisLineCount(x, y, list, 'y') >= 5) {
+				return true;
+			} else if (getBiasCount(x, y, list) >= 5) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+		// 1. X\Y轴判断
+		function getAxisLineCount(x, y, list, axis) {
+			var count = 0;
+			// 参考坐标点
+			var originCoord = (axis === 'x') ? x : y;
+			var originMoveStart = originCoord + 5;
+			var originMoveEnd = originCoord - 5;
+
+			// 向前搜索
+			for (var i = originCoord; i < originMoveStart; i++) {
+				if (originCoord + i > 224) {
+					break;
+				}
+				//x轴变化  y轴不变
+				if ((axis === 'x') ? isHaveChess(i, y, list) : isHaveChess(x, i, list)) {
+					count++;
+				} else {
+					// 如果没有相连的 直接退出检查
+					break;
+				}
+			}
+
+			// 向后搜索
+			for (var j = originCoord; j > originMoveEnd; j--) {
+				if (j < 0) {
+					break;
+				}
+				if ((axis === 'x') ? isHaveChess(j, y, list) : isHaveChess(x, j, list)) {
+					count++;
+				} else {
+					break;
+				}
+			}
+			return count - 1;
+		}
+
+		// X轴 + Y轴判断 斜切线
+		function getBiasCount(x, y, list) {
+			var count = 0;
+			// 向右下角5个
+			for (var i = 0; i < 5; i++) {
+				if ((x + i) > 224 || (y + i) > 224) {
+					break;
+				}
+				if (isHaveChess(x + i, y + i, list)) {
+					count++;
+				} else {
+					break;
+				}
+			}
+
+			// 向左上角5个
+			for (var i = 0; i < 5; i++) {
+				if ((x - i) < 0 || (y - i) < 0) {
+					break;
+				}
+				if (isHaveChess(x - i, y - i, list)) {
+					count++;
+				} else {
+					break;
+				}
+			}
+			return count - 1;
+		}
+
+
+
+	</script>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js"
+	integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+	crossorigin="anonymous"></script>
+<script type="text/javascript" src="../../asset/js/common.js"></script>
+
+
+</html>
