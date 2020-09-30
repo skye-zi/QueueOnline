@@ -34,17 +34,6 @@ h5 {
     margin-right:0;
 }
 
-.change-tip{
-    width: 240px;
-    position: absolute;
-    bottom: 70%;
-    right: 0;
-    z-index: 6;
-    background-color: rgba(255, 255, 255, 0.5);
-    padding: 10px;
-    /* color: #fff; */
-    text-align: left;
-}
 .search-container .dropdown > button {
     background-color:transparent;
     padding: 10px;
@@ -63,4 +52,8 @@ h5 {
     margin-right:10px;
     font-size:18px;
 
+}
+.fa-utensils,.fa-cookie-bite,.fa-cut,.fa-shopping-bag
+{
+    margin-right:10px;
 }
