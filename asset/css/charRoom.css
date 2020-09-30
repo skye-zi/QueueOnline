@@ -324,3 +324,10 @@
 .RightFoot .inputBox i{
     margin: 0 5px;
 }
+.fa-paperclip,.fa-smile,.fa-paper-plane
+{
+    font-size:15px;
+    padding-top: 10px;
+    padding-right: 5px;
+
+}

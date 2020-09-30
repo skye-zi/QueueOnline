@@ -56,11 +56,11 @@ h5 {
 {
     background-color:transparent;
 }
-.iconfont.icon-search
+.fa-search-location
 {
     margin-left:15px;
     margin-top: 7px;
-    margin-right:10px
+    margin-right:10px;
+    font-size:18px;
 
 }
-

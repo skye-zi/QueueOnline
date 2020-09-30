@@ -109,4 +109,17 @@
   /* color: #fff; */
   text-align: left;
 }
+.fa-facebook ,.fa-instagram ,.fa-google
+{
+  font-size:38px; 
+  margin:15px;
+}
+
+.fa-user-circle, .fa-unlock-alt
+{
+  font-size:26px; 
+  margin-top:15px;
+  margin-right:25px;
+
+}
 

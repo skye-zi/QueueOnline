@@ -7,7 +7,7 @@ $('.conLeft li').on('click', function () {
 $('.sendBtn').on('click', function () {
 	var news = $('#dope').val();
 	if (news == '') {
-		alert('不能为空');
+		alert('Type something.');
 	} else {
 		$('#dope').val('');
 		var str = '';
@@ -75,7 +75,7 @@ $('input').bind('keydown', function (event) {
 	if (event.keyCode == "13") {
 		var news = $('#dope').val();
 		if (news == '') {
-			alert('不能为空');
+			alert('Type something.');
 		} else {
 			$('#dope').val('');
 			var str = '';
